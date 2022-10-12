@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.http.HttpHeaders;
 
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -14,8 +15,12 @@ public class RsData<T> {
     private String msg;
     private T data;
 
+    public static <T> RsData<T> of(String resultCode, String msg, T data) {
+        return new RsData<>(resultCode, msg, data);
+    }
+
     public static <T> RsData<T> of(String resultCode, String msg) {
-        return new RsData<>(resultCode, msg, null);
+        return of(resultCode, msg, null);
     }
 
     public boolean isSuccess() {
