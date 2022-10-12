@@ -25,24 +25,25 @@ public class MemberController {
     @PostMapping("/login")
     public ResponseEntity<RsData> login(@RequestBody LoginDto loginDto) {
         if (loginDto.isNotValid()) {
-            return Util.spring.responseEntityOf(RsData.of("S-1", "로그인 성공, Access Token을 발급합니다."), RsData.of("F-1", "로그인 정보가 올바르지 않습니다."));
+            return Util.spring.responseEntityOf(RsData.of("F-1", "로그인 정보가 올바르지 않습니다."));
         }
 
         Member member = memberService.findByUsername(loginDto.getUsername()).orElse(null);
 
         if (member == null) {
-            return Util.spring.responseEntityOf(RsData.of("S-1", "로그인 성공, Access Token을 발급합니다."), RsData.of("F-2", "일치하는 회원이 존재하지 않습니다."));
+            return Util.spring.responseEntityOf(RsData.of("F-2", "일치하는 회원이 존재하지 않습니다."));
         }
 
         if (passwordEncoder.matches(loginDto.getPassword(), member.getPassword()) == false) {
-            return Util.spring.responseEntityOf(RsData.of("S-1", "로그인 성공, Access Token을 발급합니다."), RsData.of("F-3", "비밀번호가 일치하지 않습니다."));
+            return Util.spring.responseEntityOf(RsData.of("F-3", "비밀번호가 일치하지 않습니다."));
         }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authentication", "JWT_Access_Token");
-
-        return Util.spring.responseEntityOf(RsData.of("S-1", "로그인 성공, Access Token을 발급합니다."), headers);
+        return Util.spring.responseEntityOf(
+                RsData.of("S-1", "로그인 성공, Access Token을 발급합니다."),
+                Util.spring.httpHeadersOf("Authentication", "JWT_Access_Token")
+        );
     }
+
 
     @Data
     public static class LoginDto {
